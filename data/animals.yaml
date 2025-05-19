@@ -215,7 +215,7 @@ animals:
       - poi: POIField
         delta_r: 1
         height: 1
-      - pod: POIField
+      - poi: POIField
         delta_q: 1
         height: 1
 
@@ -498,7 +498,7 @@ animals:
       - poi: POIWater
         delta_r: 1
         height: 1
-      - pod: POIWater
+      - poi: POIWater
         delta_q: 1
         height: 1
 
