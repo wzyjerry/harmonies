@@ -1,0 +1,535 @@
+animals:
+  - name: gator # 鳄鱼 🐊
+    kind: POIWater
+    scores:
+      - 4
+      - 9
+      - 15
+    pattern:
+      - poi: POIWater
+        animal: true
+        height: 1
+      - poi: POIWater
+        delta_q: -1
+        height: 1
+      - poi: POITree
+        delta_q: -2
+        height: 3
+
+  - name: ray # 鳐 🐡
+    kind: POIWater
+    scores:
+      - 4
+      - 10
+      - 16
+    pattern:
+      - poi: POIWater
+        animal: true
+        height: 1
+      - poi: POIMountain
+        delta_q: -1
+        height: 1
+      - poi: POIMountain
+        delta_q: -1
+        delta_r: 1
+        height: 1
+      
+  - name: fish # 鱼 🐟
+    kind: POIWater
+    scores:
+      - 3
+      - 6
+      - 10
+      - 16
+    pattern:
+      - poi: POIWater
+        animal: true
+        height: 1
+      - poi: POIMountain
+        delta_q: -1
+        height: 3
+
+  - name: otter # 海獭 🦦
+    kind: POIWater
+    scores:
+      - 5
+      - 10
+      - 16
+    pattern:
+      - poi: POIWater
+        animal: true
+        height: 1
+      - poi: POITree
+        delta_q: -1
+        height: 1
+      - poi: POITree
+        delta_q: -2
+        height: 1
+
+  - name: frog # 青蛙 🐸
+    kind: POIWater
+    scores:
+      - 2
+      - 4
+      - 6
+      - 10
+      - 15
+    pattern:
+      - poi: POIWater
+        animal: true
+        height: 1
+      - poi: POITree
+        delta_q: -1
+        height: 1
+
+  - name: duck # 鸭子 🦆
+    kind: POIWater
+    scores:
+      - 2
+      - 4
+      - 8
+      - 13
+    pattern:
+      - poi: POIWater
+        animal: true
+        height: 1
+      - poi: POIBuilding
+        delta_q: -1
+        height: 2
+
+  - name: flamingo # 火烈鸟 🦩
+    kind: POIWater
+    scores:
+      - 4
+      - 10
+      - 16
+    pattern:
+      - poi: POIWater
+        animal: true
+        height: 1
+      - poi: POIField
+        delta_q: -1
+        height: 1
+      - poi: POIField
+        delta_q: -1
+        delta_r: 1
+        height: 1
+
+  - name: gecko # 壁虎 🦎
+    kind: POIBuilding
+    scores:
+      - 5
+      - 10
+      - 16
+    pattern:
+      - poi: POIBuilding
+        animal: true
+        height: 2
+      - poi: POIField
+        delta_q: -1
+        height: 1
+      - poi: POIField
+        delta_q: -2
+        height: 1
+
+  - name: mouse # 老鼠 🐭
+    kind: POIBuilding
+    scores:
+      - 5
+      - 10
+      - 17
+    pattern:
+      - poi: POIBuilding
+        animal: true
+        height: 2
+      - poi: POIField
+        delta_q: -1
+        delta_r: 1
+        height: 1
+      - poi: POIField
+        delta_q: 1
+        height: 1
+
+  - name: peacock # 孔雀 🦚
+    kind: POIBuilding
+    scores:
+      - 5
+      - 10
+      - 17
+    pattern:
+      - poi: POIBuilding
+        animal: true
+        height: 2
+      - poi: POIWater
+        delta_q: -1
+        delta_r: 1
+        height: 1
+      - poi: POIWater
+        delta_q: 1
+        height: 1
+
+  - name: squirrel # 松鼠 🦝
+    kind: POIBuilding
+    scores:
+      - 4
+      - 9
+      - 15
+    pattern:
+      - poi: POIBuilding
+        animal: true
+        height: 2
+      - poi: POITree
+        delta_q: -1
+        height: 3
+
+  - name: hedgehog # 刺猬 🦔
+    kind: POIBuilding
+    scores:
+      - 5
+      - 12
+    pattern:
+      - poi: POIBuilding
+        animal: true
+        height: 2
+      - poi: POITree
+        delta_q: -1
+        height: 2
+      - poi: POITree
+        delta_q: -1
+        delta_r: 1
+        height: 2
+
+  - name: bumblebee # 蜜蜂 🐝
+    kind: POITree
+    scores:
+      - 8
+      - 18
+    pattern:
+      - poi: POITree
+        animal: true
+        height: 2
+      - poi: POIField
+        delta_q: -1
+        delta_r: 1
+        height: 1
+      - poi: POIField
+        delta_r: 1
+        height: 1
+      - pod: POIField
+        delta_q: 1
+        height: 1
+
+  - name: bear # 熊 🐻
+    kind: POITree
+    scores:
+      - 5
+      - 11
+    pattern:
+      - poi: POITree
+        animal: true
+        height: 1
+      - poi: POIMountain
+        delta_q: -1
+        height: 2
+      - poi: POIMountain
+        delta_q: -1
+        delta_r: 1
+        height: 2
+
+  - name: rabbit # 兔子 🐇
+    kind: POITree
+    scores:
+      - 5
+      - 10
+      - 17
+    pattern:
+      - poi: POITree
+        animal: true
+        height: 1
+      - poi: POITree
+        delta_q: -1
+        height: 1
+      - poi: POIBuilding
+        delta_q: -2
+        height: 2
+
+  - name: macaw # 鹦鹉 🦜
+    kind: POITree
+    scores:
+      - 4
+      - 9
+      - 14
+    pattern:
+      - poi: POITree
+        animal: true
+        height: 2
+      - poi: POIWater
+        delta_q: -1
+        height: 1
+      - poi: POIWater
+        delta_q: -1
+        delta_r: 1
+        height: 1
+
+  - name: boar # 野猪 🐗
+    kind: POITree
+    scores:
+      - 4
+      - 8
+      - 13
+    pattern:
+      - poi: POITree
+        animal: true
+        height: 2
+      - poi: POIBuilding
+        delta_q: -1
+        height: 2
+
+  - name: koala # 考拉 🐨
+    kind: POITree
+    scores:
+      - 3
+      - 6
+      - 10
+      - 15
+    pattern:
+      - poi: POITree
+        animal: true
+        height: 2
+      - poi: POITree
+        delta_q: -1
+        height: 1
+
+  - name: wolf # 狼 🐺
+    kind: POITree
+    scores:
+      - 4
+      - 10
+      - 16
+    pattern:
+      - poi: POITree
+        animal: true
+        height: 3
+      - poi: POIField
+        delta_q: -1
+        height: 1
+      - poi: POIField
+        delta_q: -1
+        delta_r: 1
+        height: 1
+
+  - name: kookaburra # 笑翠鸟 🦧
+    kind: POITree
+    scores:
+      - 5
+      - 11
+      - 18
+    pattern:
+      - poi: POITree
+        animal: true
+        height: 3
+      - poi: POIWater
+        delta_q: -1
+        delta_r: 1
+        height: 1
+      - poi: POIWater
+        delta_q: 1
+        height: 1
+
+  - name: penguin # 企鹅 🐧
+    kind: POIMountain
+    scores:
+      - 4
+      - 10
+      - 16
+    pattern:
+      - poi: POIMountain
+        animal: true
+        height: 1
+      - poi: POIWater
+        delta_q: -1
+        delta_r: 1
+        height: 1
+      - poi: POIWater
+        delta_q: 1
+        height: 1
+
+  - name: bat # 蝙蝠 🦇
+    kind: POIMountain
+    scores:
+      - 3
+      - 6
+      - 10
+      - 15
+    pattern:
+      - poi: POIMountain
+        animal: true
+        height: 1
+      - poi: POITree
+        delta_q: -1
+        height: 3
+
+  - name: fennec_fox # 耳廓狐 🦊
+    kind: POIMountain
+    scores:
+      - 4
+      - 9
+      - 16
+    pattern:
+      - poi: POIMountain
+        animal: true
+        height: 1
+      - poi: POIMountain
+        delta_q: -1
+        height: 1
+      - poi: POIField
+        delta_q: -2
+        height: 1
+
+  - name: macaque # 猕猴 🐒
+    kind: POIMountain
+    scores:
+      - 5
+      - 11
+    pattern:
+      - poi: POIMountain
+        animal: true
+        height: 2
+      - poi: POIWater
+        delta_q: -1
+        height: 1
+      - poi: POIWater
+        delta_q: -1
+        delta_r: 1
+        height: 1
+
+  - name: eagle # 鹰 🦅
+    kind: POIMountain
+    scores:
+      - 5
+      - 11
+    pattern:
+      - poi: POIMountain
+        animal: true
+        height: 3
+      - poi: POIField
+        delta_q: -1
+        height: 1
+
+  - name: meerkat # 狐猴 🦧
+    kind: POIMountain
+    scores:
+      - 2
+      - 5
+      - 9
+      - 14
+    pattern:
+      - poi: POIMountain
+        animal: true
+        height: 1
+      - poi: POIField
+        delta_q: -1
+        height: 1
+
+  - name: raven # 乌鸦 🦉
+    kind: POIField
+    scores:
+      - 4
+      - 9
+    pattern:
+      - poi: POIField
+        animal: true
+        height: 1
+      - poi: POIBuilding
+        delta_q: -1
+        delta_r: 1
+        height: 2
+      - poi: POIBuilding
+        delta_q: 1
+        height: 2
+
+  - name: llama # 羊驼 🦙
+    kind: POIField
+    scores:
+      - 5
+      - 12
+    pattern:
+      - poi: POIField
+        animal: true
+        height: 1
+      - poi: POIField
+        delta_q: -1
+        height: 1
+      - poi: POIMountain
+        delta_q: -2
+        height: 2
+
+  - name: arctic_fox # 北极狐 🦊
+    kind: POIField
+    scores:
+      - 5
+      - 10
+      - 17
+    pattern:
+      - poi: POIField
+        animal: true
+        height: 1
+      - poi: POITree
+        delta_q: -1
+        delta_r: 1
+        height: 2
+      - poi: POITree
+        delta_q: 1
+        height: 2
+
+  - name: raccoon # 浣熊 🦝
+    kind: POIField
+    scores:
+      - 6
+      - 12
+    pattern:
+      - poi: POIField
+        animal: true
+        height: 1
+      - poi: POIWater
+        delta_q: -1
+        delta_r: 1
+        height: 1
+      - poi: POIWater
+        delta_r: 1
+        height: 1
+      - pod: POIWater
+        delta_q: 1
+        height: 1
+
+  - name: ladybug # 蜻蜓 🐞
+    kind: POIField
+    scores:
+      - 2
+      - 5
+      - 8
+      - 12
+      - 17
+    pattern:
+      - poi: POIField
+        animal: true
+        height: 1
+      - poi: POITree
+        delta_q: -1
+        height: 1
+
+  - name: panther # 豹 🐅
+    kind: POIField
+    scores:
+      - 5
+      - 11
+    pattern:
+      - poi: POIField
+        animal: true
+        height: 1
+      - poi: POITree
+        delta_q: -1
+        height: 2
+      - poi: POITree
+        delta_q: -2
+        height: 2

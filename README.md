@@ -1,11 +1,13 @@
 # harmonies
 harmonies helper
 [rule](https://cdn.svc.asmodee.net/production-libellud/uploads/2024/03/LIBELLUD_HARMONIES_RULES_EN-1.pdf)
+[rank](https://boardgamegeek.com/thread/3461284/animal-cards-are-they-all-worth-it)
+
 ## hexagons
 [hexmap](https://www.redblobgames.com/grids/hexagons/)
 
 ```plain
-    s   -r
+    +s  -r
 
 -q          +q
 
