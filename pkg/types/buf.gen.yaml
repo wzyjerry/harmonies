@@ -1,0 +1,9 @@
+version: v1
+managed:
+  enabled: true
+  go_package_prefix:
+    default: github.com/wzyjerry/harmonies/pkg/types
+plugins:
+  - plugin: go
+    out: pkg/types
+    opt: paths=source_relative

@@ -1,0 +1,59 @@
+syntax = "proto3";
+package types;
+
+// Card 卡牌描述
+message Card {
+    // name 名称
+    string name = 1;
+
+    // scores 得分
+    repeated int32 scores = 2;
+
+    // tokens 需要条件
+    repeated Token tokens = 3;
+
+    // color 卡牌颜色
+    Color color = 4;
+}
+
+// Color 颜色
+enum Color {
+    // 未设置
+    ColorUnset = 0;
+
+    // blue 23
+    ColorBlue = 1;
+
+    // gray 23
+    ColorGray = 2;
+
+    // brown 21
+    ColorBrown = 3;
+
+    // green 19
+    ColorGreen = 4;
+
+    // yellow 19
+    ColorYellow = 5;
+
+    // red 15
+    ColorRed = 6;
+}
+
+// Token 条件描述
+message Token {
+    // color 最上层颜色（blue / gray / green / yellow / red)
+    Color color = 1;
+
+    // animal 放置动物，标记 (0, 0)
+    bool animal = 2;
+
+    // delta_q 相对于动物格偏移 q
+    bool delta_q = 3;
+
+    // delta_r 相对于动物格偏移 r
+    bool delta_r = 4;
+
+    // height 需要高度
+    int32 height = 5;
+}
