@@ -7,15 +7,18 @@ import (
 	"image"
 	"image/color"
 	"math"
-	"os"
 
 	"github.com/fogleman/gg"
+	"github.com/golang/freetype/truetype"
+	"github.com/wzyjerry/harmonies/data"
 	"github.com/wzyjerry/harmonies/pkg/types"
+	"golang.org/x/image/font"
 	"google.golang.org/protobuf/encoding/protojson"
 	"gopkg.in/yaml.v3"
 )
 
-var data types.GameData
+var game types.GameData
+var font18, font30 font.Face
 
 func yaml2json(b []byte) ([]byte, error) {
 	var data map[string]any
@@ -27,18 +30,25 @@ func yaml2json(b []byte) ([]byte, error) {
 }
 
 func init() {
-	file, err := os.ReadFile("../../data/animals.yaml")
+	raw, err := yaml2json(data.Data)
 	if err != nil {
 		panic(err)
 	}
-	raw, err := yaml2json(file)
+	err = protojson.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(raw, &game)
 	if err != nil {
 		panic(err)
 	}
-	err = protojson.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(raw, &data)
+
+	f, err := truetype.Parse(data.FontData)
 	if err != nil {
 		panic(err)
 	}
+	font18 = truetype.NewFace(f, &truetype.Options{
+		Size: 18,
+	})
+	font30 = truetype.NewFace(f, &truetype.Options{
+		Size: 30,
+	})
 }
 
 const (
@@ -130,6 +140,31 @@ func DrawToken(col color.Color, layer int) image.Image {
 	return dc.Image()
 }
 
+func DrawScore(col color.Color, score int32) image.Image {
+	dc := gg.NewContext(35, 70)
+	animal := DrawAnimal(0)
+	dc.DrawImageAnchored(animal, 35/2, 35/2, 0.5, 0.5)
+
+	dc.SetColor(col)
+	dc.DrawRectangle(5, 40, 25, 25)
+	dc.FillPreserve()
+	dc.SetRGBA255(255, 255, 255, 30)
+	dc.Fill()
+
+	dc.SetFontFace(font18)
+	dc.SetRGBA255(0, 0, 0, 150)
+	dc.DrawStringAnchored(fmt.Sprintf("%d", score), 35/2, 35+15, 0.5, 0.5)
+	return dc.Image()
+}
+
+func DrawTitle(col color.Color, title string) image.Image {
+	dc := gg.NewContext(w, 70)
+	dc.SetColor(col)
+	dc.SetFontFace(font30)
+	dc.DrawStringAnchored(title, w/2, 35/2, 0.5, 0.5)
+	return dc.Image()
+}
+
 func main() {
 	colors := map[types.Color]color.RGBA{
 		types.Color_ColorRed:    {R: 216, G: 40, B: 75, A: 255},
@@ -144,13 +179,33 @@ func main() {
 	dc.SetRGB(1, 1, 1)
 	dc.Clear()
 
+	animal := game.Animals[12]
+
+	color := colors[types.Color_ColorBrown]
+	switch animal.Kind {
+	case types.POI_POIBuilding:
+		color = colors[types.Color_ColorRed]
+	case types.POI_POITree:
+		color = colors[types.Color_ColorGreen]
+	case types.POI_POIWater:
+		color = colors[types.Color_ColorBlue]
+	case types.POI_POIField:
+		color = colors[types.Color_ColorYellow]
+	case types.POI_POIMountain:
+		color = colors[types.Color_ColorGray]
+	}
+	for i, score := range animal.Scores {
+		dc.DrawImageAnchored(DrawScore(color, score), w-20, 40+70*(len(game.Animals[7].Scores)-i-1), 0.5, 0.5)
+	}
+	title := DrawTitle(color, animal.Name)
+	dc.DrawImageAnchored(title, w/2, 45, 0.5, 0.5)
+
 	dc.Translate(w/2, h/2)
 	dc.Scale(1, 0.866)
 	dc.Translate(-w/2, -h/2)
 
 	tile := DrawTile()
-
-	for _, t := range data.Animals[12].Pattern {
+	for _, t := range animal.Pattern {
 		DrawTileWithQR(dc, tile, int(t.DeltaQ), int(t.DeltaR))
 		switch t.Poi {
 		case types.POI_POIWater:
@@ -174,9 +229,24 @@ func main() {
 				}
 			}
 		}
+		if t.Animal {
+			DrawTileWithQR(dc, DrawAnimal(t.Height), int(t.DeltaQ), int(t.DeltaR))
+		}
 	}
-
 	dc.SavePNG("../../output/card.png")
+}
+
+func DrawAnimal(layer int32) image.Image {
+	dc := gg.NewContext(width, width)
+	dc.SetRGBA255(0, 0, 0, 0)
+	dc.Clear()
+	dc.Translate(0, 10-float64(layer)*15)
+
+	dc.DrawRegularPolygon(6, width/2, width/2, size/3, -math.Pi/2)
+	dc.SetRGB255(252, 118, 52)
+	dc.Fill()
+
+	return dc.Image()
 }
 
 func PrintCard(card *types.Card) string {
