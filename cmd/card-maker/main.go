@@ -7,6 +7,7 @@ import (
 	"image"
 	"image/color"
 	"math"
+	"strings"
 
 	"github.com/fogleman/gg"
 	"github.com/golang/freetype/truetype"
@@ -18,7 +19,7 @@ import (
 )
 
 var game types.GameData
-var font18, font30 font.Face
+var font14, font18, font30 font.Face
 
 func yaml2json(b []byte) ([]byte, error) {
 	var data map[string]any
@@ -43,6 +44,9 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
+	font14 = truetype.NewFace(f, &truetype.Options{
+		Size: 14,
+	})
 	font18 = truetype.NewFace(f, &truetype.Options{
 		Size: 18,
 	})
@@ -62,7 +66,15 @@ const (
 )
 
 var (
-	vert = math.Sqrt(3) * sizeWithPadding
+	vert   = math.Sqrt(3) * sizeWithPadding
+	colors = map[types.Color]color.RGBA{
+		types.Color_ColorRed:    {R: 216, G: 40, B: 75, A: 255},
+		types.Color_ColorGreen:  {R: 110, G: 182, B: 46, A: 255},
+		types.Color_ColorBlue:   {R: 62, G: 126, B: 145, A: 255},
+		types.Color_ColorYellow: {R: 251, G: 175, B: 37, A: 255},
+		types.Color_ColorBrown:  {R: 111, G: 62, B: 59, A: 255},
+		types.Color_ColorGray:   {R: 120, G: 103, B: 102, A: 255},
+	}
 )
 
 func DrawTile() image.Image {
@@ -75,32 +87,37 @@ func DrawTile() image.Image {
 	return dc.Image()
 }
 
-func GetPatternSize(pattern []*types.Token) (minQ, maxQ, minR, maxR int) {
-	minQ, maxQ = math.MaxInt, math.MinInt
-	minR, maxR = math.MaxInt, math.MinInt
-	for _, token := range pattern {
-		if int(token.DeltaQ) < minQ {
-			minQ = int(token.DeltaQ)
-		}
-		if int(token.DeltaQ) > maxQ {
-			maxQ = int(token.DeltaQ)
-		}
-		if int(token.DeltaR) < minR {
-			minR = int(token.DeltaR)
-		}
-		if int(token.DeltaR) > maxR {
-			maxR = int(token.DeltaR)
-		}
-	}
-	return
-}
-
 func DrawTileWithQR(dc *gg.Context, tile image.Image, q int, r int) {
-	// dc.DrawImageAnchored(tile, w/2+q*horiz+30, h/2+int(float64(2*r+q)*vert/2)+180, 0.5, 0.5)
 	dc.DrawImageAnchored(tile, w/2+q*horiz, h/2+int(float64(2*r+q)*vert/2), 0.5, 0.5)
 }
 
-func DrawToken(col color.Color, layer int) image.Image {
+func CalcDrawRange(pattern []*types.Token) (width, height, left, top int32) {
+	left, top = math.MaxInt32, math.MaxInt32
+	var right, bottom int32 = math.MinInt32, math.MinInt32
+	for _, t := range pattern {
+		posX := t.DeltaQ * horiz
+		posY := (2*t.DeltaR + t.DeltaQ) * int32(vert) / 2
+		l := posX - size
+		r := posX + size
+		t := posY - int32(vert)/2
+		b := posY + int32(vert)/2
+		if l < left {
+			left = l
+		}
+		if r > right {
+			right = r
+		}
+		if t < top {
+			top = t
+		}
+		if b > bottom {
+			bottom = b
+		}
+	}
+	return right - left, bottom - top, left, top
+}
+
+func DrawToken(col color.Color, layer int32) image.Image {
 	const cx, cy = width / 2, width / 2
 	dc := gg.NewContext(width, width)
 	dc.SetRGBA255(0, 0, 0, 0)
@@ -165,75 +182,93 @@ func DrawTitle(col color.Color, title string) image.Image {
 	return dc.Image()
 }
 
-func main() {
-	colors := map[types.Color]color.RGBA{
-		types.Color_ColorRed:    {R: 216, G: 40, B: 75, A: 255},
-		types.Color_ColorGreen:  {R: 110, G: 182, B: 46, A: 255},
-		types.Color_ColorBlue:   {R: 62, G: 126, B: 145, A: 255},
-		types.Color_ColorYellow: {R: 251, G: 175, B: 37, A: 255},
-		types.Color_ColorBrown:  {R: 111, G: 62, B: 59, A: 255},
-		types.Color_ColorGray:   {R: 120, G: 103, B: 102, A: 255},
+func DrawCardInfo(col color.Color, card *types.Card) image.Image {
+	dc := gg.NewContext(w, 300)
+	dc.SetColor(col)
+	dc.SetFontFace(font14)
+	info := strings.Split(PrintCard(card), "\n")
+	for i, line := range info {
+		dc.DrawString(line, 10, 30+20*(float64(i)+1))
 	}
-	dc := gg.NewContext(w, h)
+	return dc.Image()
+}
 
-	dc.SetRGB(1, 1, 1)
-	dc.Clear()
+func DrawTileWithQRAndPosition(dc *gg.Context, tile image.Image, q int32, r int32, left int32, top int32) {
+	dc.DrawImageAnchored(tile, int(-left+q*horiz), int(-top)+int(float64(2*r+q)*vert/2), 0.5, 0.5)
+}
 
-	animal := game.Animals[12]
+func DrawPattern(animal *types.Card) image.Image {
+	patternWidth, patternHeight, left, top := CalcDrawRange(animal.Pattern)
 
-	color := colors[types.Color_ColorBrown]
-	switch animal.Kind {
-	case types.POI_POIBuilding:
-		color = colors[types.Color_ColorRed]
-	case types.POI_POITree:
-		color = colors[types.Color_ColorGreen]
-	case types.POI_POIWater:
-		color = colors[types.Color_ColorBlue]
-	case types.POI_POIField:
-		color = colors[types.Color_ColorYellow]
-	case types.POI_POIMountain:
-		color = colors[types.Color_ColorGray]
-	}
-	for i, score := range animal.Scores {
-		dc.DrawImageAnchored(DrawScore(color, score), w-20, 40+70*(len(game.Animals[7].Scores)-i-1), 0.5, 0.5)
-	}
-	title := DrawTitle(color, animal.Name)
-	dc.DrawImageAnchored(title, w/2, 45, 0.5, 0.5)
-
-	dc.Translate(w/2, h/2)
-	dc.Scale(1, 0.866)
-	dc.Translate(-w/2, -h/2)
+	dc := gg.NewContext(int(patternWidth), int(patternHeight))
 
 	tile := DrawTile()
 	for _, t := range animal.Pattern {
-		DrawTileWithQR(dc, tile, int(t.DeltaQ), int(t.DeltaR))
+		DrawTileWithQRAndPosition(dc, tile, t.DeltaQ, t.DeltaR, left, top)
 		switch t.Poi {
 		case types.POI_POIWater:
-			DrawTileWithQR(dc, DrawToken(colors[types.Color_ColorBlue], 0), int(t.DeltaQ), int(t.DeltaR))
+			DrawTileWithQRAndPosition(dc, DrawToken(colors[types.Color_ColorBlue], 0), t.DeltaQ, t.DeltaR, left, top)
 		case types.POI_POIField:
-			DrawTileWithQR(dc, DrawToken(colors[types.Color_ColorYellow], 0), int(t.DeltaQ), int(t.DeltaR))
+			DrawTileWithQRAndPosition(dc, DrawToken(colors[types.Color_ColorYellow], 0), t.DeltaQ, t.DeltaR, left, top)
 		case types.POI_POIBuilding:
 			for layer := range t.Height {
-				DrawTileWithQR(dc, DrawToken(colors[types.Color_ColorRed], int(layer)), int(t.DeltaQ), int(t.DeltaR))
+				DrawTileWithQRAndPosition(dc, DrawToken(colors[types.Color_ColorRed], layer), t.DeltaQ, t.DeltaR, left, top)
 			}
 		case types.POI_POIMountain:
 			for layer := range t.Height {
-				DrawTileWithQR(dc, DrawToken(colors[types.Color_ColorGray], int(layer)), int(t.DeltaQ), int(t.DeltaR))
+				DrawTileWithQRAndPosition(dc, DrawToken(colors[types.Color_ColorGray], layer), t.DeltaQ, t.DeltaR, left, top)
 			}
 		case types.POI_POITree:
 			for layer := range t.Height {
 				if layer != t.Height-1 {
-					DrawTileWithQR(dc, DrawToken(colors[types.Color_ColorBrown], int(layer)), int(t.DeltaQ), int(t.DeltaR))
+					DrawTileWithQRAndPosition(dc, DrawToken(colors[types.Color_ColorBrown], layer), t.DeltaQ, t.DeltaR, left, top)
 				} else {
-					DrawTileWithQR(dc, DrawToken(colors[types.Color_ColorGreen], int(layer)), int(t.DeltaQ), int(t.DeltaR))
+					DrawTileWithQRAndPosition(dc, DrawToken(colors[types.Color_ColorGreen], layer), t.DeltaQ, t.DeltaR, left, top)
 				}
 			}
 		}
 		if t.Animal {
-			DrawTileWithQR(dc, DrawAnimal(t.Height), int(t.DeltaQ), int(t.DeltaR))
+			DrawTileWithQRAndPosition(dc, DrawAnimal(t.Height), t.DeltaQ, t.DeltaR, left, top)
 		}
 	}
-	dc.SavePNG("../../output/card.png")
+	return dc.Image()
+}
+
+func main() {
+	for i, animal := range game.Animals {
+		dc := gg.NewContext(w, h)
+
+		dc.SetRGB(1, 1, 1)
+		dc.Clear()
+		color := colors[types.Color_ColorBrown]
+		switch animal.Kind {
+		case types.POI_POIBuilding:
+			color = colors[types.Color_ColorRed]
+		case types.POI_POITree:
+			color = colors[types.Color_ColorGreen]
+		case types.POI_POIWater:
+			color = colors[types.Color_ColorBlue]
+		case types.POI_POIField:
+			color = colors[types.Color_ColorYellow]
+		case types.POI_POIMountain:
+			color = colors[types.Color_ColorGray]
+		}
+		for i, score := range animal.Scores {
+			dc.DrawImageAnchored(DrawScore(color, score), w-20, 40+70*(len(animal.Scores)-i-1), 0.5, 0.5)
+		}
+		title := DrawTitle(color, animal.Name)
+		dc.DrawImageAnchored(title, w/2, 45, 0.5, 0.5)
+		cardInfo := DrawCardInfo(color, animal)
+		dc.DrawImageAnchored(cardInfo, w/2, 200, 0.5, 0.5)
+
+		dc.Translate(w/2, h/2)
+		dc.Scale(1, 0.866)
+		dc.Translate(-w/2, -h/2)
+		pattern := DrawPattern(animal)
+		dc.DrawImageAnchored(pattern, w/2, h-50, 0.5, 0.5)
+
+		dc.SavePNG(fmt.Sprintf("../../output/card_%d.png", i))
+	}
 }
 
 func DrawAnimal(layer int32) image.Image {
