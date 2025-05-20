@@ -39,12 +39,12 @@ func PlaceRock(p *Pattern, hex cube.Hex) {
 }
 
 func PlaceHill(p *Pattern, hex cube.Hex) {
-	p.Place(hex, types.Color_ColorBrown, 0)
-	p.Place(hex, types.Color_ColorBrown, 1)
+	p.Place(hex, types.Color_ColorGray, 0)
+	p.Place(hex, types.Color_ColorGray, 1)
 }
 
 func PlaceMountain(p *Pattern, hex cube.Hex) {
-	p.Place(hex, types.Color_ColorBrown, 0)
-	p.Place(hex, types.Color_ColorBrown, 1)
-	p.Place(hex, types.Color_ColorBrown, 2)
+	p.Place(hex, types.Color_ColorGray, 0)
+	p.Place(hex, types.Color_ColorGray, 1)
+	p.Place(hex, types.Color_ColorGray, 2)
 }
