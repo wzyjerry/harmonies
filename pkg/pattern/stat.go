@@ -92,7 +92,7 @@ func (p *Pattern) Stat() *Stat {
 			visited[hex] = Nil{}
 			topColor := make(map[types.Color]Nil)
 			for dir := range cube.CubeDirectionCount {
-				next := cube.CubeNeighbor(hex, dir)
+				next := hex.Neighbor(dir)
 				t := p.Get(next)
 				if t == nil {
 					continue

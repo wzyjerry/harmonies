@@ -97,7 +97,7 @@ func (s *Stat) WaterVPForA() int {
 		for len(q) > 0 {
 			hex := pop(&q)
 			for dir := range cube.CubeDirectionCount {
-				next := cube.CubeNeighbor(hex.Hex, dir)
+				next := hex.Hex.Neighbor(dir)
 				if _, ok := water[next]; !ok {
 					continue
 				}
