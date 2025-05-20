@@ -121,3 +121,27 @@ func Perfab2Func(prefab string) Perfab {
 	}
 	return PerfabNothing
 }
+
+func Perfab2Tokens(prefab string) int {
+	switch prefab {
+	case "water":
+		return 1
+	case "plain":
+		return 1
+	case "grass":
+		return 1
+	case "tree":
+		return 2
+	case "forest":
+		return 3
+	case "building":
+		return 2
+	case "rock":
+		return 1
+	case "hill":
+		return 2
+	case "mountain":
+		return 3
+	}
+	return 0
+}

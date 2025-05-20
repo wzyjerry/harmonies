@@ -15,23 +15,24 @@ import (
 // 6. 以第一张卡牌的默认形状作为起点。
 
 // 正向计分：
-// 1. 完成的任务数量，每个任务记 5 分
+// 1. 完成的任务数量，每个任务记 50 分
 
 // 负向计分：
-// 1. 占用格子数量，每个格子扣 1 分
+// 1. 占用格子数量，每个格子扣 3 分
 // 2. 考虑 6，我们总是将第一张卡牌的动物位置标记为中心。
 //    扣除 距离^2 分数
 // 3. 对于使用最多的 Perfab，惩罚 count^2
+// 4. 使用 token 的数量，每个token 扣 5 分
 
 type Scene struct {
-	Score     int
-	visited   map[cube.Hex]Nil
-	pattern   *pattern.Pattern
-	usage     int
-	perfabs   map[string]int
-	distance  int
-	animals   int
-	animalsAt [][]cube.Hex
+	Score      int
+	pattern    *pattern.Pattern
+	usage      int
+	usageToken int
+	perfabs    map[string]int
+	distance   int
+	animals    int
+	animalsAt  [][]cube.Hex
 }
 
 type PriorityQueue []Scene
@@ -60,8 +61,9 @@ func (pq *PriorityQueue) Pop() any {
 }
 
 func (s *Scene) CalcScore() {
-	score := s.animals * 5
-	score -= s.usage
+	score := s.animals * 50
+	score -= s.usage * 3
+	score -= s.usageToken * 5
 	score -= s.distance * s.distance
 	largest := 0
 	for _, count := range s.perfabs {
