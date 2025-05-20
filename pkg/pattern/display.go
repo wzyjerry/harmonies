@@ -115,6 +115,9 @@ func DrawToken(col color.Color, layer int) image.Image {
 func (p *Pattern) Display() (*gg.Context, int, int) {
 	patternWidth, patternHeight, left, top := p.calcDrawRange()
 	dc := gg.NewContext(patternWidth, patternHeight)
+	dc.Translate(float64(dc.Width())/2, float64(dc.Height())/2)
+	dc.Scale(1, 0.866)
+	dc.Translate(-float64(dc.Width())/2, -float64(dc.Height())/2)
 	tile := DrawTile()
 	p.RLock()
 	defer p.RUnlock()
@@ -147,5 +150,6 @@ func (p *Pattern) DisplayWithAnimals(animalsAt [][]cube.Hex) *gg.Context {
 			DrawTileWithQRAndPosition(dc, DrawAnimal(p.Get(hex).Height+1), hex.Q, hex.R, left, top)
 		}
 	}
+
 	return dc
 }
