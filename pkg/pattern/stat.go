@@ -22,6 +22,7 @@ type HexInfo struct {
 	Hex               cube.Hex
 	Distance          int
 	NeighborTopColors int
+	Height            int
 }
 
 func (a *Area) String() string {
@@ -115,6 +116,7 @@ func (p *Pattern) Stat() *Stat {
 				Hex:               hex,
 				Distance:          hexWithDistance.Distance,
 				NeighborTopColors: len(topColor),
+				Height:            p.Get(hex).Height,
 			})
 		}
 		stat.Areas = append(stat.Areas, &Area{

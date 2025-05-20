@@ -33,7 +33,7 @@ func (s *Stat) TerrainVPWithoutWater() int {
 				continue
 			}
 			for _, hex := range area.Hexes {
-				total += vpForHeight(s.Pattern.Get(hex.Hex).Height)
+				total += vpForHeight(hex.Height)
 			}
 		case types.POI_POIField:
 			if len(area.Hexes) == 1 {
@@ -42,7 +42,7 @@ func (s *Stat) TerrainVPWithoutWater() int {
 			total += 5
 		case types.POI_POIBuilding:
 			for _, hex := range area.Hexes {
-				if hex.NeighborTopColors >= 3 && s.Pattern.Get(hex.Hex).Height == 2 {
+				if hex.NeighborTopColors >= 3 && hex.Height == 2 {
 					total += 5
 				}
 			}

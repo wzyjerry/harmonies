@@ -9,8 +9,9 @@ import (
 type Nil = struct{}
 
 type Finder struct {
-	Perfabs []pattern.Perfab
+	Perfabs map[string]pattern.Perfab
 	Cards   []*CardInfo
+	Total   int
 }
 
 type CardInfo struct {
@@ -25,22 +26,25 @@ type CardInfo struct {
 	AnimalPOI types.POI
 
 	// 动物所在的层高
-	AnimalHeight int32
+	AnimalHeight int
 }
 
 func New(animals []*types.Card) *Finder {
-	perfab := make(map[string]Nil)
+	perfabs := make(map[string]pattern.Perfab)
 	cards := make([]*CardInfo, 0, len(animals))
+	total := 0
 	for _, animal := range animals {
 		info := &CardInfo{
 			PatternGroup: make([][]*types.Token, cube.CubeDirectionCount),
 			AnimalCount:  len(animal.Scores),
 		}
+		total += info.AnimalCount
 		for _, tile := range animal.Pattern {
-			perfab[pattern.PoiHeight2Prefab(tile.Poi, tile.Height)] = Nil{}
+			name := pattern.PoiHeight2Prefab(tile.Poi, tile.Height)
+			perfabs[name] = pattern.Perfab2Func(name)
 			if tile.Animal {
 				info.AnimalPOI = tile.Poi
-				info.AnimalHeight = tile.Height
+				info.AnimalHeight = int(tile.Height)
 				continue
 			}
 			hex := cube.NewHex(int(tile.DeltaQ), int(tile.DeltaR))
@@ -62,14 +66,11 @@ func New(animals []*types.Card) *Finder {
 		}
 		cards = append(cards, info)
 	}
-	perfabs := make([]pattern.Perfab, 0, len(perfab))
-	for k := range perfab {
-		perfabs = append(perfabs, pattern.Perfab2Func(k))
-	}
 
 	f := &Finder{
 		Perfabs: perfabs,
 		Cards:   cards,
+		Total:   total,
 	}
 	return f
 }

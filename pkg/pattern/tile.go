@@ -32,8 +32,7 @@ func (t *Tile) POI() types.POI {
 	switch t.Top() {
 	case types.Color_ColorBlue:
 		return types.POI_POIWater
-	case types.Color_ColorGreen,
-		types.Color_ColorBrown:
+	case types.Color_ColorGreen:
 		return types.POI_POITree
 	case types.Color_ColorGray:
 		return types.POI_POIMountain
@@ -42,5 +41,6 @@ func (t *Tile) POI() types.POI {
 	case types.Color_ColorYellow:
 		return types.POI_POIField
 	}
+	// 注意这里 types.Color_ColorBrown 是未定义 POI
 	return types.POI_POIUnset
 }
