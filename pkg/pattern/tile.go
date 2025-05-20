@@ -7,25 +7,25 @@ import (
 )
 
 type Tile struct {
-	height int
-	layers []types.Color
+	Height int
+	Layers []types.Color
 }
 
 func NewTile() *Tile {
 	return &Tile{
-		layers: make([]types.Color, 0, 3),
+		Layers: make([]types.Color, 0, 3),
 	}
 }
 
 func (t *Tile) Clone() *Tile {
 	return &Tile{
-		height: t.height,
-		layers: slices.Clone(t.layers),
+		Height: t.Height,
+		Layers: slices.Clone(t.Layers),
 	}
 }
 
 func (t *Tile) Top() types.Color {
-	return t.layers[t.height]
+	return t.Layers[t.Height]
 }
 
 func (t *Tile) POI() types.POI {

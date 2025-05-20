@@ -68,7 +68,10 @@ func TestStat(t *testing.T) {
 			}
 		}
 		fmt.Println("animal_", i, animal.Name)
-		fmt.Println(p.Stat())
+		stat := p.Stat()
+		fmt.Println(stat)
+		fmt.Println("VPWithoutWater", stat.TerrainVPWithoutWater())
+		fmt.Println("VPAWater", stat.WaterVPForA())
 		fmt.Println()
 	}
 }

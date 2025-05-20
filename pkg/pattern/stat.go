@@ -9,12 +9,19 @@ import (
 )
 
 type Stat struct {
-	Areas []*Area
+	Areas   []*Area
+	Pattern *Pattern
 }
 
 type Area struct {
 	POI   types.POI
-	Hexes []cube.Hex
+	Hexes []HexInfo
+}
+
+type HexInfo struct {
+	Hex               cube.Hex
+	Distance          int
+	NeighborTopColors int
 }
 
 func (a *Area) String() string {
@@ -39,13 +46,21 @@ func (s *Stat) String() string {
 
 type Nil = struct{}
 
+func pop[T any](q *[]T) T {
+	h := (*q)[0]
+	*q = (*q)[1:]
+	return h
+}
+
 func (p *Pattern) Stat() *Stat {
 	start, ok := p.FindStarter()
 	if !ok {
 		return &Stat{}
 	}
+	p = p.Clone()
 	stat := &Stat{
-		Areas: make([]*Area, 0),
+		Areas:   make([]*Area, 0),
+		Pattern: p,
 	}
 
 	// 统计区块信息
@@ -53,14 +68,8 @@ func (p *Pattern) Stat() *Stat {
 	//         记录过程中见到的其余网格坐标作为其他区域候选起点
 	visited := make(map[cube.Hex]Nil)
 
-	seedQ := make([]cube.Hex, 0, 128)
+	seedQ := make([]cube.Hex, 0, 32)
 	seedQ = append(seedQ, start)
-
-	pop := func(q *[]cube.Hex) cube.Hex {
-		h := (*q)[0]
-		*q = (*q)[1:]
-		return h
-	}
 
 	// 如果存在候选起点，选择一个作为当前区域种子
 	for len(seedQ) > 0 {
@@ -71,29 +80,42 @@ func (p *Pattern) Stat() *Stat {
 		poi := p.Get(seed).POI()
 
 		// 当前区域队列
-		areaQ := make([]cube.Hex, 0, 128)
-		hexes := make([]cube.Hex, 0)
-		areaQ = append(areaQ, seed)
+		areaQ := make([]HexInfo, 0, 32)
+		hexes := make([]HexInfo, 0)
+		areaQ = append(areaQ, HexInfo{
+			Hex:      seed,
+			Distance: 0,
+		})
 		for len(areaQ) > 0 {
-			hex := pop(&areaQ)
-			hexes = append(hexes, hex)
+			hexWithDistance := pop(&areaQ)
+			hex := hexWithDistance.Hex
 			visited[hex] = Nil{}
+			topColor := make(map[types.Color]Nil)
 			for dir := range cube.CubeDirectionCount {
 				next := cube.CubeNeighbor(hex, dir)
 				t := p.Get(next)
 				if t == nil {
 					continue
 				}
+				topColor[t.Top()] = Nil{}
 				if _, ok := visited[next]; ok {
 					continue
 				}
 				npoi := t.POI()
 				if npoi == poi {
-					areaQ = append(areaQ, next)
+					areaQ = append(areaQ, HexInfo{
+						Hex:      next,
+						Distance: hexWithDistance.Distance + 1,
+					})
 				} else {
 					seedQ = append(seedQ, next)
 				}
 			}
+			hexes = append(hexes, HexInfo{
+				Hex:               hex,
+				Distance:          hexWithDistance.Distance,
+				NeighborTopColors: len(topColor),
+			})
 		}
 		stat.Areas = append(stat.Areas, &Area{
 			POI:   poi,

@@ -28,6 +28,6 @@ func (p *Pattern) Place(hex cube.Hex, color types.Color, layer int) {
 		defer p.Unlock()
 		p.data[hex] = tile
 	}
-	tile.layers = append(tile.layers, color)
-	tile.height = layer
+	tile.Layers = append(tile.Layers, color)
+	tile.Height = layer
 }

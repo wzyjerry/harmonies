@@ -36,7 +36,7 @@ func (p *Pattern) CanPlace(hex cube.Hex, color types.Color, layer int) bool {
 		}
 	}
 	// 检查放置层
-	if layer != tile.height+1 {
+	if layer != tile.Height+1 {
 		return false
 	}
 	top := tile.Top()
