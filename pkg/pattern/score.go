@@ -14,7 +14,7 @@ import (
 //  3. 对于 POIField，如果 len(area) == 1 记 0 分
 //     否则记 5 分
 //  4. 对于 POIBuilding，检查每个建筑的邻居的 6 个格子（如果存在）
-//     如果顶部的颜色大于等于 3 种，记 5 分
+//     如果高度为 2 且顶部的颜色大于等于 3 种，记 5 分
 //     否则记 0 分
 func (s *Stat) TerrainVPWithoutWater() int {
 	total := 0
@@ -42,7 +42,7 @@ func (s *Stat) TerrainVPWithoutWater() int {
 			total += 5
 		case types.POI_POIBuilding:
 			for _, hex := range area.Hexes {
-				if hex.NeighborTopColors >= 3 {
+				if hex.NeighborTopColors >= 3 && s.Pattern.Get(hex.Hex).Height == 2 {
 					total += 5
 				}
 			}
