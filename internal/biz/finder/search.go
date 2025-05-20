@@ -110,13 +110,19 @@ func (f *Finder) Search() {
 							if !found {
 								found = true
 								foundUsage = scene.usageToken
+								fmt.Println(foundUsage)
+								fmt.Println(scene.pattern.Hash())
+								dc := scene.pattern.DisplayWithAnimals(scene.animalsAt)
+								dc.SavePNG("../../output/pattern.png")
 							} else {
 								if scene.usageToken < foundUsage {
 									foundUsage = scene.usageToken
+									fmt.Println(foundUsage)
+									fmt.Println(scene.pattern.Hash())
+									dc := scene.pattern.DisplayWithAnimals(scene.animalsAt)
+									dc.SavePNG("../../output/pattern.png")
 								}
 							}
-							fmt.Println(foundUsage)
-							fmt.Println(scene.pattern.Hash())
 						} else {
 							if !found {
 								heap.Push(pq, scene)

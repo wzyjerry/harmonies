@@ -27,6 +27,8 @@ type CardInfo struct {
 
 	// 动物所在的层高
 	AnimalHeight int
+
+	Name string
 }
 
 func New(animals []*types.Card) *Finder {
@@ -37,6 +39,7 @@ func New(animals []*types.Card) *Finder {
 		info := &CardInfo{
 			PatternGroup: make([][]*types.Token, cube.CubeDirectionCount),
 			AnimalCount:  len(animal.Scores),
+			Name:         animal.Name,
 		}
 		total += info.AnimalCount
 		for _, tile := range animal.Pattern {

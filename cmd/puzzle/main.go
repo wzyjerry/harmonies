@@ -33,6 +33,6 @@ func init() {
 }
 
 func main() {
-	f := finder.New([]*types.Card{game.Animals[5], game.Animals[7]})
+	f := finder.New([]*types.Card{game.Animals[0]})
 	f.Search()
 }
